@@ -1,7 +1,7 @@
-package com.shell.components;
+package components;
 
-import com.shell.components.services.CommandHandler;
-import com.shell.components.services.CommandParser;
+import components.services.CommandHandler;
+import components.services.CommandParser;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;

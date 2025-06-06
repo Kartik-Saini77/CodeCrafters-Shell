@@ -1,10 +1,10 @@
-package com.shell;
-
-import com.shell.components.Shell;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import components.Shell;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
+@Configuration
+@ComponentScan(basePackages = "components")
 public class Main {
 
     public static void main(String[] args) throws Exception {
