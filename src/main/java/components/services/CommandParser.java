@@ -1,7 +1,12 @@
 package components.services;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class CommandParser {
+
+    public String[] parse(String command) {
+
+        return command.split(" ");
+    }
 }

@@ -1,7 +1,6 @@
 package components;
 
 import components.services.CommandHandler;
-import components.services.CommandParser;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -12,19 +11,24 @@ import java.io.InputStreamReader;
 public class Shell {
 
     CommandHandler commandHandler;
-    CommandParser commandParser;
 
-    public Shell(CommandHandler commandHandler, CommandParser commandParser) {
+    public Shell(CommandHandler commandHandler) {
         this.commandHandler = commandHandler;
-        this.commandParser = commandParser;
     }
-
 
     public void startServer() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader((System.in)));
 
-        System.out.print("$ ");
-        String input = br.readLine();
-        System.out.println(input + ": command not found");
+        while (true) {
+            System.out.print("$ ");
+            String input = br.readLine();
+
+            if (input.startsWith("exit"))
+                break;
+
+            String result = commandHandler.handleCommand(input);
+
+            System.out.println(result);
+        }
     }
 }
