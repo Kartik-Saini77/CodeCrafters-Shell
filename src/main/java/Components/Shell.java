@@ -1,6 +1,6 @@
-package components;
+package Components;
 
-import components.services.CommandHandler;
+import Components.Services.CommandHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -23,12 +23,9 @@ public class Shell {
             System.out.print("$ ");
             String input = br.readLine();
 
-            if (input.startsWith("exit"))
-                break;
-
             String result = commandHandler.handleCommand(input);
 
-            System.out.println(result);
+            System.out.print(result);
         }
     }
 }

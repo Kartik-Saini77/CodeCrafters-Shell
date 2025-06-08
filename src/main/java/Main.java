@@ -1,10 +1,10 @@
-import components.Shell;
+import Components.Shell;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = "components")
+@ComponentScan(basePackages = "Components")
 public class Main {
 
     public static void main(String[] args) throws Exception {
