@@ -1,15 +1,19 @@
 package Components.Commands;
 
+import Components.Config.Config;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
+@Component
 public class TypeCommand implements Command {
-    Map<String, Command> builtinCommands;
-    List<String> paths;
 
-    public TypeCommand(Map<String, Command> builtinCommands) {
-        this.builtinCommands = builtinCommands;
+    private final Config config;
+    private final List<String> paths;
+
+    public TypeCommand(Config config) {
+        this.config = config;
         this.paths = List.of(System.getenv("PATH").split(":"));
     }
 
@@ -18,7 +22,7 @@ public class TypeCommand implements Command {
         int n = args.length;
 
         for (int i=1; i<n; i++) {
-            if (builtinCommands.containsKey(args[i]))
+            if (config.getBuiltinCommands().containsKey(args[i]))
                 System.out.println(args[i] + " is a shell builtin");
             else if (!checkInPath(args[i])){
                 System.out.println(args[i] + ": not found");
