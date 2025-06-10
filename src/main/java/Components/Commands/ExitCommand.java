@@ -2,7 +2,9 @@ package Components.Commands;
 
 import Components.Exceptions.NumericArgumentRequiredException;
 import Components.Exceptions.TooManyArgumentsException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ExitCommand implements Command{
 
     @Override

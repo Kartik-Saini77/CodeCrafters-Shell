@@ -1,27 +1,31 @@
 package Components.Services;
 
 import Components.Commands.*;
+import Components.Config.Config;
+import lombok.Getter;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-
+@Getter
 @Service
 public class CommandHandler {
-    CommandParser commandParser;
-    Map<String, Command> builtinCommands;
+    private final CommandParser commandParser;
+    private final Config config;
 
-    public CommandHandler(CommandParser commandParser) {
+    public CommandHandler(CommandParser commandParser, Config config, ApplicationContext context) {
         this.commandParser = commandParser;
-        this.builtinCommands = new HashMap<>();
+        this.config = config;
 
-        builtinCommands.put("exit", new ExitCommand());
-        builtinCommands.put("echo", new EchoCommand());
-        builtinCommands.put("type", new TypeCommand(builtinCommands));
+        config.getBuiltinCommands().put("exit", context.getBean(ExitCommand.class));
+        config.getBuiltinCommands().put("echo", context.getBean(EchoCommand.class));
+        config.getBuiltinCommands().put("type", context.getBean(TypeCommand.class));
+        config.getBuiltinCommands().put("pwd", context.getBean(PwdCommand.class));
+        config.getBuiltinCommands().put("cd", context.getBean(CdCommand.class));
     }
 
     public String handleCommand(String input) {
         String[] args = commandParser.parse(input);
 
-        return builtinCommands.getOrDefault(args[0], new ExecuteCommand()).execute(args);
+        return config.getBuiltinCommands().getOrDefault(args[0], new ExecuteCommand()).execute(args);
     }
 }
