@@ -4,9 +4,7 @@ import Components.Config.Config;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.nio.file.DirectoryStream;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class TypeCommand implements Command {
