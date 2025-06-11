@@ -13,33 +13,47 @@ public class CommandParser {
         List<String> list = new ArrayList<>();
         int n = command.length();
         StringBuilder current = new StringBuilder();
-        boolean isInQuotes = false;
+        boolean isInSingleQuotes = false;
+        boolean isInDoubleQuotes = false;
 
         for (int i = 0; i < n; i++) {
             char ch = command.charAt(i);
 
-            if (ch == '\'') {
-                if (i < n-1 && command.charAt(i+1) == '\'') {
-                    i += 1;
-                    continue;
-                }
-                if (!isInQuotes) {
+            if (!isInSingleQuotes && ch == '\"') {
+                if (i < n - 1 && command.charAt(i+1) == '\"') {
+                    i++;
+                } else if (!isInDoubleQuotes) {
                     if (!current.isEmpty()) {
                         list.add(current.toString());
                         current = new StringBuilder();
                     }
-                    isInQuotes = true;
+                    isInDoubleQuotes = true;
                 } else {
-                    isInQuotes = false;
+                    isInDoubleQuotes = false;
                 }
-                continue;
-            }
-
-            if (!isInQuotes && ch == ' ') {
+            } else if (!isInDoubleQuotes && ch == '\'') {
+                if (i < n - 1 && command.charAt(i+1) == '\'') {
+                    i++;
+                } else if (!isInSingleQuotes) {
+                    if (!current.isEmpty()) {
+                        list.add(current.toString());
+                        current = new StringBuilder();
+                    }
+                    isInSingleQuotes = true;
+                } else {
+                    isInSingleQuotes = false;
+                }
+            } else if (!isInDoubleQuotes && !isInSingleQuotes && ch == ' ') {
                 if (!current.isEmpty()) {
                     list.add(current.toString());
                     current = new StringBuilder();
                 }
+            } else if (isInDoubleQuotes){
+                if (ch == '\\') {
+                    if (i < n - 1 && (command.charAt(i+1) == '\\' || command.charAt(i+1) == '$' || command.charAt(i+1) == '\"' || command.charAt(i+1) == '`'))
+                        i++;
+                }
+                current.append(command.charAt(i));
             } else {
                 current.append(ch);
             }
