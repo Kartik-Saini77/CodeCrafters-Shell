@@ -16,6 +16,7 @@ public class CommandParser {
         boolean isInQuotes = false;
 
         for (int i = 0; i < n; i++) {
+            if (i < last) i = last;
             char ch = command.charAt(i);
             if (!isInQuotes && ch == ' ') {
                 String com = command.substring(last, i);
@@ -35,7 +36,6 @@ public class CommandParser {
                     do t++;
                     while (t<n && command.charAt(t) == ' ');
                     last = t;
-                    i = last - 1;
                 }
             }
         }
