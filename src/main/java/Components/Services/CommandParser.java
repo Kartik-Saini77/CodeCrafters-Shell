@@ -12,36 +12,37 @@ public class CommandParser {
         command = command.trim();
         List<String> list = new ArrayList<>();
         int n = command.length();
-        int last = 0;
+        StringBuilder current = new StringBuilder();
         boolean isInQuotes = false;
 
         for (int i = 0; i < n; i++) {
-            if (i < last) i = last;
             char ch = command.charAt(i);
-            if (!isInQuotes && ch == ' ') {
-                String com = command.substring(last, i);
-                if (!com.isEmpty()) list.add(com);
-                int t = i;
-                while(t<n && command.charAt(t) == ' ') t++;
-                last = t;
-            } else if (ch == '\'') {
+
+            if (ch == '\'') {
                 if (!isInQuotes) {
+                    if (!current.isEmpty()) {
+                        list.add(current.toString());
+                        current = new StringBuilder();
+                    }
                     isInQuotes = true;
-                    last = i + 1;
                 } else {
-                    String com = command.substring(last, i);
-                    if (!com.isEmpty()) list.add(com);
                     isInQuotes = false;
-                    int t = i;
-                    do t++;
-                    while (t<n && command.charAt(t) == ' ');
-                    last = t;
                 }
+                continue;
+            }
+
+            if (!isInQuotes && ch == ' ') {
+                if (!current.isEmpty()) {
+                    list.add(current.toString());
+                    current = new StringBuilder();
+                }
+            } else {
+                current.append(ch);
             }
         }
-        if (last != n-1) {
-            String com = command.substring(last, n);
-            if (!com.isEmpty()) list.add(com);
+
+        if (!current.isEmpty()) {
+            list.add(current.toString());
         }
 
         return list.toArray(new String[0]);
