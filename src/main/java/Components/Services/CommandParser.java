@@ -19,6 +19,10 @@ public class CommandParser {
             char ch = command.charAt(i);
 
             if (ch == '\'') {
+                if (i < n-1 && command.charAt(i+1) == '\'') {
+                    i += 1;
+                    continue;
+                }
                 if (!isInQuotes) {
                     if (!current.isEmpty()) {
                         list.add(current.toString());
