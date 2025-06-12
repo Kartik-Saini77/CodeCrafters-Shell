@@ -26,6 +26,8 @@ public class CommandHandler {
     public String handleCommand(String input) {
         String[] args = commandParser.parse(input);
 
+        if(args.length == 0)
+            return "";
         return config.getBuiltinCommands().getOrDefault(args[0], context.getBean(ExecuteCommand.class)).execute(args);
     }
 
