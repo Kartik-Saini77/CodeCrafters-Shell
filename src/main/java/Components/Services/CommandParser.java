@@ -48,6 +48,9 @@ public class CommandParser {
                     list.add(current.toString());
                     current = new StringBuilder();
                 }
+            } else if (!isInDoubleQuotes && !isInSingleQuotes && ch == '\\' && i < n - 1) {
+                i++;
+                current.append(command.charAt(i));
             } else if (isInDoubleQuotes){
                 if (ch == '\\') {
                     if (i < n - 1 && (command.charAt(i+1) == '\\' || command.charAt(i+1) == '$' || command.charAt(i+1) == '\"' || command.charAt(i+1) == '`'))
