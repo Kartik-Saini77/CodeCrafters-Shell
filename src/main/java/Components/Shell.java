@@ -22,8 +22,9 @@ public class Shell {
         while (true) {
             System.out.print("$ ");
             String input = br.readLine();
+            String[] commands = input.split(" \\| ");
 
-            String result = commandHandler.handleCommand(input);
+            String result = commandHandler.handleCommands(commands);
 
             System.out.print(result);
         }
