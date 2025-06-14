@@ -87,7 +87,7 @@ public class CommandHandler {
                     try {
                         finalInput.close();
                     } catch (IOException e) {
-                        //
+                        System.out.println(e.getMessage());
                     }
                 }
             });
