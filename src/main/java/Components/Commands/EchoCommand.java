@@ -15,6 +15,6 @@ public class EchoCommand implements Command{
                     .append(" ");
         }
 
-        return sb.append("\r\n").toString();
+        return sb.append("\n").toString();
     }
 }

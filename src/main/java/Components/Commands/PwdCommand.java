@@ -13,6 +13,6 @@ public class PwdCommand implements Command {
 
     @Override
     public String execute(String[] args) {
-        return config.getWorkingDirectory().toAbsolutePath() + "\r\n";
+        return config.getWorkingDirectory().toAbsolutePath() + "\n";
     }
 }
