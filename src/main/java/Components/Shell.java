@@ -3,16 +3,18 @@ package Components;
 import Components.Config.Config;
 import Components.Services.CommandHandler;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.UserInterruptException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.UserInterruptException;
+import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Component
 public class Shell {
@@ -23,6 +25,12 @@ public class Shell {
     private final Config config;
 
     public Shell(CommandHandler commandHandler, Config config) throws IOException {
+        Logger jlineLogger = Logger.getLogger("org.jline");
+        jlineLogger.setLevel(Level.OFF);
+        for (Handler handler : jlineLogger.getHandlers()) {
+            handler.setLevel(Level.OFF);
+        }
+
         this.commandHandler = commandHandler;
         this.config = config;
         this.terminal = TerminalBuilder.builder()
@@ -32,7 +40,7 @@ public class Shell {
                 .build();
         this.lineReader = LineReaderBuilder.builder()
                 .terminal(terminal)
-                .variable(LineReader.HISTORY_FILE, System.getProperty("user.home") + "/.shell_history")
+//                .variable(LineReader.HISTORY_FILE, System.getProperty("user.home") + "/.shell_history")
                 .option(LineReader.Option.HISTORY_VERIFY, false)
                 .option(LineReader.Option.HISTORY_BEEP, false)
                 .build();
