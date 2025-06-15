@@ -28,6 +28,7 @@ public class CommandHandler {
         config.getBuiltinCommands().put("type", context.getBean(TypeCommand.class));
         config.getBuiltinCommands().put("pwd", context.getBean(PwdCommand.class));
         config.getBuiltinCommands().put("cd", context.getBean(CdCommand.class));
+        config.getBuiltinCommands().put("history", context.getBean(HistoryCommand.class));
     }
 
     public String handleCommands(String[] commands) {
@@ -99,7 +100,8 @@ public class CommandHandler {
     }
 
     private String executeCommand(String[] args, InputStream input, OutputStream output) {
-        if (args.length == 0) return "";
+        if (args.length == 0)
+            return "";
 
         if (config.getBuiltinCommands().containsKey(args[0])) {
             String result = config.getBuiltinCommands().get(args[0]).execute(args);
