@@ -55,8 +55,8 @@ public class Shell {
                     config.getCommandHistory().add(input);
                 }
 
-                String[] commands = input.split("\\s*\\|\\s*");
-                String result = commandHandler.handleCommands(commands);
+//                String[] commands = input.split(" \\| ");
+                String result = commandHandler.handleCommand(input);
 
                 terminal.writer().print(result);
                 terminal.writer().flush();
