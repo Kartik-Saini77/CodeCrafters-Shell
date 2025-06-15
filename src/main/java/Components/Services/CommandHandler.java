@@ -117,8 +117,15 @@ public class CommandHandler {
             }
         }
 
-        for (String dir : paths) {
-            File executable = new File(dir, args[0]);
+        int n = paths.size();
+        for (int i = -1; i < n; i++) {
+            File executable;
+            if (i == -1)
+                executable = new File(config.getWorkingDirectory().toAbsolutePath().toString(), args[0]);
+            else {
+                String dir = paths.get(i);
+                executable = new File(dir, args[0]);
+            }
             if (executable.exists() && executable.canExecute()) {
                 try {
                     ProcessBuilder pb = new ProcessBuilder(args)
