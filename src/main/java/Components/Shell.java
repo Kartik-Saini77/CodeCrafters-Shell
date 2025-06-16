@@ -2,11 +2,11 @@ package Components;
 
 import Components.Config.Config;
 import Components.Services.CommandHandler;
+import Components.Services.RawInputParser;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.springframework.stereotype.Component;
@@ -35,12 +35,11 @@ public class Shell {
         this.config = config;
         this.terminal = TerminalBuilder.builder()
                 .system(true)
-//                .jansi(true)
-//                .jna(true)
                 .build();
         this.lineReader = LineReaderBuilder.builder()
                 .terminal(terminal)
 //                .variable(LineReader.HISTORY_FILE, System.getProperty("user.home") + "/.shell_history")
+                .parser(new RawInputParser())
                 .option(LineReader.Option.HISTORY_VERIFY, false)
                 .option(LineReader.Option.HISTORY_BEEP, false)
                 .build();
@@ -55,8 +54,8 @@ public class Shell {
                     config.getCommandHistory().add(input);
                 }
 
-//                String[] commands = input.split(" \\| ");
-                String result = commandHandler.handleCommand(input);
+                String[] commands = input.split(" \\| ");
+                String result = commandHandler.handleCommands(commands);
 
                 terminal.writer().print(result);
                 terminal.writer().flush();
