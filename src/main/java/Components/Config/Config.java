@@ -14,7 +14,7 @@ import java.util.Map;
 public class Config {
     private Path workingDirectory;
     private final Map<String, Command> builtinCommands;
-    private final List<String> commandHistory;
+    private List<String> commandHistory;
 
     public Config() {
         this.workingDirectory = Paths.get("");
@@ -36,5 +36,9 @@ public class Config {
 
     public List<String> getCommandHistory() {
         return commandHistory;
+    }
+
+    public void setCommandHistory(List<String> commandHistory) {
+        this.commandHistory = commandHistory;
     }
 }

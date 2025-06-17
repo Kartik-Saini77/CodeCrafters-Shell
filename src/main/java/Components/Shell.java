@@ -11,7 +11,9 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,36 +40,72 @@ public class Shell {
                 .build();
         this.lineReader = LineReaderBuilder.builder()
                 .terminal(terminal)
-//                .variable(LineReader.HISTORY_FILE, System.getProperty("user.home") + "/.shell_history")
                 .parser(new RawInputParser())
                 .option(LineReader.Option.HISTORY_VERIFY, false)
                 .option(LineReader.Option.HISTORY_BEEP, false)
                 .build();
     }
 
-    public void startServer() {
-        while (true) {
-            String input;
-            try {
-                input = lineReader.readLine("$ ");
-                if (!input.isEmpty()) {
-                    config.getCommandHistory().add(input);
+    public void startServer() throws IOException {
+        File historyFile = null;
+        try {
+            historyFile = new File(System.getenv("HISTFILE"));
+        } catch (Exception e) {
+            //
+        }
+
+        if (historyFile != null && historyFile.exists() && historyFile.isFile() && historyFile.canRead()) {
+            List<String> history = config.getCommandHistory();
+
+            try (BufferedReader br = new BufferedReader(new FileReader(historyFile))) {
+                String line = br.readLine();
+                while (line != null) {
+                    if(!line.isBlank())
+                        history.add(line);
+                    line = br.readLine();
                 }
-
-                String[] commands = input.split(" \\| ");
-                String result = commandHandler.handleCommands(commands);
-
-                terminal.writer().print(result);
-                terminal.writer().flush();
-            } catch (UserInterruptException e) {
-                terminal.writer().println();
-                terminal.writer().flush();
-            } catch (EndOfFileException e) {
-                break;
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-                terminal.writer().flush();
+            } catch (IOException e) {
+                //
             }
         }
+
+        BufferedReader br = new BufferedReader(new InputStreamReader((System.in)));
+
+        while (true) {
+            System.out.print("$ ");
+            String input = br.readLine();
+            if (!input.isEmpty()) {
+                config.getCommandHistory().add(input);
+            }
+
+            String[] commands = input.split(" \\| ");
+            String result = commandHandler.handleCommands(commands);
+
+            System.out.print(result);
+        }
+
+//        while (true) {
+//            String input;
+//            try {
+//                input = lineReader.readLine("$ ");
+//                if (!input.isEmpty()) {
+//                    config.getCommandHistory().add(input);
+//                }
+//
+//                String[] commands = input.split(" \\| ");
+//                String result = commandHandler.handleCommands(commands);
+//
+//                terminal.writer().print(result);
+//                terminal.writer().flush();
+//            } catch (UserInterruptException e) {
+//                terminal.writer().println();
+//                terminal.writer().flush();
+//            } catch (EndOfFileException e) {
+//                break;
+//            } catch (Exception e) {
+//                System.out.println("Error: " + e.getMessage());
+//                terminal.writer().flush();
+//            }
+//        }
     }
 }

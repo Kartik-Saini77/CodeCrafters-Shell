@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public class CommandParser {
 
-    public String[] parse(String command) {     //Mostly redundant now due to JLine
+    public String[] parse(String command) {
         command = command.trim();
         List<String> list = new ArrayList<>();
         int n = command.length();
