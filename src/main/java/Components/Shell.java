@@ -24,6 +24,7 @@ public class Shell {
 //    private final LineReader lineReader;
 //    private final Terminal terminal;
     private final Config config;
+    private int commandHistoryLength;
 
     public Shell(CommandHandler commandHandler, Config config) throws IOException {
         Logger jlineLogger = Logger.getLogger("org.jline");
@@ -31,6 +32,8 @@ public class Shell {
         for (Handler handler : jlineLogger.getHandlers()) {
             handler.setLevel(Level.OFF);
         }
+
+        this.commandHistoryLength = 0;
 
         this.commandHandler = commandHandler;
         this.config = config;
@@ -59,6 +62,7 @@ public class Shell {
             try (BufferedReader br = new BufferedReader(new FileReader(historyFile))) {
                 String line = br.readLine();
                 while (line != null) {
+                    commandHistoryLength++;
                     if(!line.isBlank())
                         history.add(line);
                     line = br.readLine();
@@ -106,5 +110,24 @@ public class Shell {
 //                terminal.writer().flush();
 //            }
 //        }
+    }
+
+    public void saveHistory() {
+        File historyFile = null;
+        try {
+            historyFile = new File(System.getenv("HISTFILE"));
+        } catch (Exception e) {
+            return;
+        }
+
+        try (FileWriter writer = new FileWriter(historyFile, true)) {
+            List<String> history = config.getCommandHistory();
+            for (int i = commandHistoryLength; i < history.size(); i++) {
+                writer.write(history.get(i));
+                writer.write("\n");
+            }
+        } catch (IOException e) {
+            //
+        }
     }
 }

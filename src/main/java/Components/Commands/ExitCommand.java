@@ -3,26 +3,23 @@ package Components.Commands;
 import Components.Config.Config;
 import Components.Exceptions.NumericArgumentRequiredException;
 import Components.Exceptions.TooManyArgumentsException;
+import Components.Shell;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
 
 @Component
 public class ExitCommand implements Command{
 
-    private final Config config;
+    private final ApplicationContext context;
 
-    public ExitCommand(Config config) {
-        this.config = config;
+    public ExitCommand(ApplicationContext context) {
+        this.context = context;
     }
 
     @Override
     public String execute(String[] args) {
         if (args.length == 1) {
-            saveHistory();
+            context.getBean(Shell.class).saveHistory();
             System.exit(0);
             return "0";
         }
@@ -35,34 +32,15 @@ public class ExitCommand implements Command{
         try {
             try {
                 int status = Integer.parseInt(args[1]);
-                saveHistory();
+                context.getBean(Shell.class).saveHistory();
                 System.exit(status);
             } catch (NumberFormatException e) {
                 throw new NumericArgumentRequiredException("exit", args[1]);
             }
         } catch (NumericArgumentRequiredException e) {
-            saveHistory();
+            context.getBean(Shell.class).saveHistory();
             System.exit(1);
         }
         return args[1];
-    }
-
-    private void saveHistory() {
-        File historyFile = null;
-        try {
-            historyFile = new File(System.getenv("HISTFILE"));
-        } catch (Exception e) {
-            return;
-        }
-
-        try (FileWriter writer = new FileWriter(historyFile, true)) {
-            List<String> history = config.getCommandHistory();
-            for (String command : history) {
-                writer.write(command);
-                writer.write("\n");
-            }
-        } catch (IOException e) {
-            //
-        }
     }
 }
