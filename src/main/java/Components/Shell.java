@@ -12,7 +12,6 @@ import org.jline.terminal.TerminalBuilder;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -22,8 +21,8 @@ import java.util.logging.Logger;
 public class Shell {
 
     CommandHandler commandHandler;
-    private final LineReader lineReader;
-    private final Terminal terminal;
+//    private final LineReader lineReader;
+//    private final Terminal terminal;
     private final Config config;
 
     public Shell(CommandHandler commandHandler, Config config) throws IOException {
@@ -35,15 +34,15 @@ public class Shell {
 
         this.commandHandler = commandHandler;
         this.config = config;
-        this.terminal = TerminalBuilder.builder()
-                .system(true)
-                .build();
-        this.lineReader = LineReaderBuilder.builder()
-                .terminal(terminal)
-                .parser(new RawInputParser())
-                .option(LineReader.Option.HISTORY_VERIFY, false)
-                .option(LineReader.Option.HISTORY_BEEP, false)
-                .build();
+//        this.terminal = TerminalBuilder.builder()
+//                .system(true)
+//                .build();
+//        this.lineReader = LineReaderBuilder.builder()
+//                .terminal(terminal)
+//                .parser(new RawInputParser())
+//                .option(LineReader.Option.HISTORY_VERIFY, false)
+//                .option(LineReader.Option.HISTORY_BEEP, false)
+//                .build();
     }
 
     public void startServer() throws IOException {
