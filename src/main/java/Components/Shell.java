@@ -7,6 +7,7 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.springframework.stereotype.Component;
@@ -21,8 +22,9 @@ import java.util.logging.Logger;
 public class Shell {
 
     CommandHandler commandHandler;
-//    private final LineReader lineReader;
-//    private final Terminal terminal;
+    private final LineReader lineReader;
+    private final Terminal terminal;
+    private final DefaultParser parser;
     private final Config config;
     private int commandHistoryLength;
 
@@ -34,21 +36,23 @@ public class Shell {
         }
 
         this.commandHistoryLength = 0;
+        this.parser = new DefaultParser();
+        parser.setEscapeChars(new char[0]);
 
         this.commandHandler = commandHandler;
         this.config = config;
-//        this.terminal = TerminalBuilder.builder()
-//                .system(true)
-//                .build();
-//        this.lineReader = LineReaderBuilder.builder()
-//                .terminal(terminal)
-//                .parser(new RawInputParser())
-//                .option(LineReader.Option.HISTORY_VERIFY, false)
-//                .option(LineReader.Option.HISTORY_BEEP, false)
-//                .build();
+        this.terminal = TerminalBuilder.builder()
+                .system(true)
+                .build();
+        this.lineReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .parser(parser)
+                .option(LineReader.Option.HISTORY_VERIFY, false)
+                .option(LineReader.Option.HISTORY_BEEP, false)
+                .build();
     }
 
-    public void startServer() throws IOException {
+    public void startServer() {
         File historyFile = null;
         try {
             historyFile = new File(System.getenv("HISTFILE"));
@@ -72,44 +76,29 @@ public class Shell {
             }
         }
 
-        BufferedReader br = new BufferedReader(new InputStreamReader((System.in)));
-
         while (true) {
-            System.out.print("$ ");
-            String input = br.readLine();
-            if (!input.isEmpty()) {
-                config.getCommandHistory().add(input);
+            String input;
+            try {
+                input = lineReader.readLine("$ ");
+                if (!input.isEmpty()) {
+                    config.getCommandHistory().add(input);
+                }
+
+                String[] commands = input.split(" \\| ");
+                String result = commandHandler.handleCommands(commands);
+
+                terminal.writer().print(result);
+                terminal.writer().flush();
+            } catch (UserInterruptException e) {
+                terminal.writer().println();
+                terminal.writer().flush();
+            } catch (EndOfFileException e) {
+                break;
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+                terminal.writer().flush();
             }
-
-            String[] commands = input.split(" \\| ");
-            String result = commandHandler.handleCommands(commands);
-
-            System.out.print(result);
         }
-
-//        while (true) {
-//            String input;
-//            try {
-//                input = lineReader.readLine("$ ");
-//                if (!input.isEmpty()) {
-//                    config.getCommandHistory().add(input);
-//                }
-//
-//                String[] commands = input.split(" \\| ");
-//                String result = commandHandler.handleCommands(commands);
-//
-//                terminal.writer().print(result);
-//                terminal.writer().flush();
-//            } catch (UserInterruptException e) {
-//                terminal.writer().println();
-//                terminal.writer().flush();
-//            } catch (EndOfFileException e) {
-//                break;
-//            } catch (Exception e) {
-//                System.out.println("Error: " + e.getMessage());
-//                terminal.writer().flush();
-//            }
-//        }
     }
 
     public void saveHistory() {
