@@ -1,6 +1,5 @@
 package Components.Commands;
 
-import Components.Config.Config;
 import Components.Exceptions.NumericArgumentRequiredException;
 import Components.Exceptions.TooManyArgumentsException;
 import Components.Shell;

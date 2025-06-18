@@ -31,14 +31,6 @@ public class CommandHandler {
         config.getBuiltinCommands().put("history", context.getBean(HistoryCommand.class));
     }
 
-//    public String handleCommand(String input) {
-//        String[] args = commandParser.parse(input);
-//
-//        if(args.length == 0)
-//            return "";
-//        return config.getBuiltinCommands().getOrDefault(args[0], context.getBean(ExecuteCommand.class)).execute(args);
-//    }
-
     public String handleCommands(String[] commands) {
         if (commands.length == 1) {
             String[] args = commandParser.parse(commands[0]);
