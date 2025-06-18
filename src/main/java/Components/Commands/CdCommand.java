@@ -33,9 +33,9 @@ public class CdCommand implements Command {
             File directory = newPath.toFile();
 
             if (!directory.exists())
-                return "cd: " + args[1] + ": No such file or directory\r\n";
+                return "cd: " + args[1] + ": No such file or directory\n";
             else if (directory.isFile())
-                return "cd: " + args[1] + ": Not a directory\r\n";
+                return "cd: " + args[1] + ": Not a directory\n";
             else
                 config.setWorkingDirectory(newPath);
         }

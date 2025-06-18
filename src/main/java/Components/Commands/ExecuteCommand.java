@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 @Component
-public class ExecuteCommand implements Command {
+public class ExecuteCommand implements Command {        //Redundant now
     List<String> paths;
 
     public ExecuteCommand() {

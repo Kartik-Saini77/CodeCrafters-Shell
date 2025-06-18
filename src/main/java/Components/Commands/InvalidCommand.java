@@ -4,6 +4,8 @@ public class InvalidCommand implements Command{
 
     @Override
     public String execute(String[] args) {
-        return String.join(" ", args) + ": command not found\r\n";
+        System.out.print(String.join(" ", args) + ": command not found\n");
+
+        return "";
     }
 }
