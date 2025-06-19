@@ -1,5 +1,8 @@
 package Components.Commands;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class InvalidCommand implements Command{
 
     @Override
