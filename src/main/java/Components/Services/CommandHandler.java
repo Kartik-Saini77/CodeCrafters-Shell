@@ -42,7 +42,7 @@ public class CommandHandler {
             PipedOutputStream currentOutput = new PipedOutputStream(currentInput);
 
             String[] firstCommand = commandParser.parse(commands[0]);
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     executeCommand(firstCommand, null, currentOutput);
                 } finally {
@@ -61,15 +61,14 @@ public class CommandHandler {
 
                 String[] currentCommand = commandParser.parse(commands[i]);
                 PipedInputStream finalPrevInput = prevInput;
-                PipedOutputStream finalNextOutput = nextOutput;
 
-                future = future.thenRunAsync(() -> {
+                CompletableFuture.runAsync(() -> {
                     try {
-                        executeCommand(currentCommand, finalPrevInput, finalNextOutput);
+                        executeCommand(currentCommand, finalPrevInput, nextOutput);
                     } finally {
                         try {
                             finalPrevInput.close();
-                            finalNextOutput.close();
+                            nextOutput.close();
                         } catch (IOException e) {
                             //
                         }
@@ -80,8 +79,8 @@ public class CommandHandler {
             }
 
             String[] lastCommand = commandParser.parse(commands[commands.length - 1]);
-            PipedInputStream finalInput = prevInput;
-            CompletableFuture<String> lastFuture = future.thenApplyAsync(v -> {
+            InputStream finalInput = prevInput;
+            return CompletableFuture.supplyAsync(() -> {
                 try {
                     return executeCommand(lastCommand, finalInput, null);
                 } finally {
@@ -91,9 +90,7 @@ public class CommandHandler {
                         System.out.println(e.getMessage());
                     }
                 }
-            });
-
-            return lastFuture.join();
+            }).get();
         } catch (Exception e) {
             return "Error: " + e.getMessage() + "\n";
         }
@@ -153,7 +150,6 @@ public class CommandHandler {
                                 output.flush();
                             }
                         }
-                        process.waitFor();
                         return "";
                     } else {
                         StringBuilder result = new StringBuilder();
@@ -164,15 +160,14 @@ public class CommandHandler {
                                 result.append(line).append("\n");
                             }
                         }
-                        process.waitFor();
                         return result.toString();
                     }
-                } catch (IOException | InterruptedException e) {
+                } catch (IOException e) {
                     return "Error: " + e.getMessage() + "\n";
                 }
             }
         }
-        return new InvalidCommand().execute(args);
+        return context.getBean(InvalidCommand.class).execute(args);
     }
 
     public CommandParser getCommandParser() {
